@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>App PRO</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 80px;
+      background: #020617;
+      color: white;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #38bdf8;
+      cursor: pointer;
+    }
+    #app, #registro {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🔐 Sistema</h2>
+
+<div id="login">
+  <input type="text" id="loginUser" placeholder="Usuario"><br>
+  <input type="password" id="loginPass" placeholder="Contraseña"><br>
+  <button onclick="login()">Entrar</button>
+  <p>¿No tienes cuenta? <button onclick="mostrarRegistro()">Registrarse</button></p>
+</div>
+
+<div id="registro">
+  <input type="text" id="newUser" placeholder="Nuevo usuario"><br>
+  <input type="password" id="newPass" placeholder="Nueva contraseña"><br>
+  <button onclick="registrar()">Crear cuenta</button>
+</div>
+
+<p id="mensaje"></p>
+
+<div id="app">
+  <h1>Bienvenido 🔥</h1>
+  <p id="userText"></p>
+  <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script>
+  let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+  function registrar(){
+    let u = document.getElementById("newUser").value;
+    let p = document.getElementById("newPass").value;
+
+    usuarios.push({user: u, pass: p});
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    document.getElementById("mensaje").innerText = "✅ Usuario creado";
+  }
+
+  function login(){
+    let u = document.getElementById("loginUser").value;
+    let p = document.getElementById("loginPass").value;
+
+    let user = usuarios.find(x => x.user === u && x.pass === p);
+
+    if(user){
+      localStorage.setItem("sesion", u);
+      mostrarApp();
+    } else {
+      document.getElementById("mensaje").innerText = "❌ Error";
+    }
+  }
+
+  function mostrarRegistro(){
+    document.getElementById("registro").style.display = "block";
+  }
+
+  function mostrarApp(){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("registro").style.display = "none";
+    document.getElementById("app").style.display = "block";
+
+    let user = localStorage.getItem("sesion");
+    document.getElementById("userText").innerText = "Usuario: " + user;
+  }
+
+  function logout(){
+    localStorage.removeItem("sesion");
+    location.reload();
+  }
+
+  // Mantener sesión activa
+  if(localStorage.getItem("sesion")){
+    mostrarApp();
+  }
+</script>
+
+</body>
+</html>
